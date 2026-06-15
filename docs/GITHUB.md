@@ -2,11 +2,14 @@
 
 Step-by-step to version the project and push it to GitHub.
 
+**Repository:** https://github.com/luccadumas/english-dictionary
+
 ## 1. Prerequisites
 
 - [Git](https://git-scm.com/downloads) installed
 - GitHub account
 - Project running locally (`npm run test:all` passing)
+- Node.js **22+**
 
 ## 2. Create the remote repository
 
@@ -16,11 +19,7 @@ Step-by-step to version the project and push it to GitHub.
 4. **Do not** initialize with README, `.gitignore`, or license (the project already has them)
 5. Click **Create repository**
 
-Copy the remote URL, e.g. `https://github.com/your-user/english-dictionary.git`
-
 ## 3. Initialize Git locally (first time only)
-
-From the project root:
 
 ```bash
 git init
@@ -38,21 +37,30 @@ git status
 - `.env`, `.env.local`, `backend/.env`, `frontend/.env.local`
 - `node_modules/`
 - `.next/`, `dist/`, `coverage/`
-
-These are already listed in `.gitignore`.
+- `.vercel/`, `.railway/` (local CLI state)
 
 **Must be committed:**
 
 - `backend/package-lock.json`
 - `frontend/package-lock.json`
 - `backend/prisma/migrations/`
-- `railway.toml`, Dockerfiles, CI workflow
+- `Dockerfile`, `railway.toml`, `docker-compose.yml`
+- `frontend/vercel.json`
+- `.github/workflows/ci.yml`
 
-## 5. First commit
+## 5. Commits
+
+Use [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+feat(api): add endpoint for user favorites
+fix(deploy): correct Railway Dockerfile context
+chore(docs): update deploy instructions
+```
 
 ```bash
 git add .
-git commit -m "Initial commit: English Dictionary monorepo"
+git commit -m "feat: initial commit"
 ```
 
 ## 6. Connect remote and push
@@ -62,27 +70,23 @@ git remote add origin https://github.com/your-user/english-dictionary.git
 git push -u origin main
 ```
 
-If GitHub asks for authentication, use a [Personal Access Token](https://github.com/settings/tokens) (classic, `repo` scope) instead of a password.
-
 ## 7. Daily workflow
 
 ```bash
-git checkout -b feature/my-change    # optional branch
+git checkout -b feature/my-change
 # ... edit files ...
 git add .
-git commit -m "Describe the change"
+git commit -m "feat(web): add profile modal"
 git push origin feature/my-change    # open PR on GitHub
-# or push directly to main:
-git push origin main
 ```
 
 ## 8. Enable CI
 
-After the first push, open **Actions** on GitHub. The workflow [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs automatically on `main` and `develop`:
+After the first push, open **Actions** on GitHub. The workflow [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs on `main` and `develop`:
 
-- Backend: lint, unit, E2E, build
-- Frontend: lint, unit, build
-- Docker: image build on `main`
+- **backend:** lint, unit, E2E, build (Node 22)
+- **frontend:** lint, unit, build (Node 22)
+- **docker:** image build on `main`
 
 ## 9. Branch protection (recommended)
 
@@ -92,6 +96,26 @@ GitHub → **Settings → Branches → Add rule**:
 - Require status checks: `backend`, `frontend`
 - Require pull request before merging (optional)
 
-## 10. Deploy (optional)
+## 10. Deploy
 
-After pushing to GitHub, see the **Deploy** section in the root [README.md](../README.md) for Railway (API) and Vercel (frontend).
+After pushing to GitHub:
+
+| Service | Platform | Trigger |
+|---------|----------|---------|
+| API | Railway | Git push → `dictionary-api` service |
+| Frontend | Vercel | Git push → `frontend/` root directory |
+
+See the **Deploy** section in the root [README.md](../README.md) for full setup (variables, CORS, import words).
+
+### Quick reference
+
+**Railway (API)**
+
+- Root `Dockerfile` + `railway.toml`
+- Plugins: Postgres, Redis
+- `CORS_ORIGIN` = Vercel URL
+
+**Vercel (frontend)**
+
+- Root Directory: `frontend`
+- `NEXT_PUBLIC_API_URL` = Railway API URL

@@ -24,7 +24,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
-    "import:words": "ts-node -r tsconfig-paths/register scripts/import-words.ts"
+    "import:words": "node scripts/import-words.mjs"
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.2",

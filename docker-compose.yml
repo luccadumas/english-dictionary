@@ -1,3 +1,6 @@
+# Local development and production simulation.
+# Production deploy: API → Railway (Dockerfile at repo root) · Frontend → Vercel.
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -55,6 +58,7 @@ services:
       REDIS_PORT: 6379
       PORT: 3333
       NODE_ENV: development
+      CORS_ORIGIN: http://localhost:3000
     ports:
       - '3333:3333'
     volumes:
@@ -84,6 +88,7 @@ services:
       REDIS_PORT: 6379
       PORT: 3333
       NODE_ENV: production
+      CORS_ORIGIN: http://localhost:3000
     ports:
       - '3333:3333'
     depends_on:
@@ -132,10 +137,17 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
+      HOSTNAME: 0.0.0.0
     ports:
       - '3000:3000'
     depends_on:
-      - api-prod
+      api-prod:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/login']
+      interval: 30s
+      timeout: 5s
+      retries: 3
     networks:
       - dictionary_network
 

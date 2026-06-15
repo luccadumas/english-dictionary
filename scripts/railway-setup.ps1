@@ -25,8 +25,7 @@ if (-not (Test-Path ".railway")) {
 $jwtSecret = node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 Write-Host ""
 Write-Host "=== dictionary-api ===" -ForegroundColor Green
-Write-Host "Link to dictionary-api service when prompted (or run: railway service)" -ForegroundColor Gray
-railway service
+railway service link dictionary-api
 
 Write-Host "Setting API variables..." -ForegroundColor Cyan
 railway variables set `
@@ -34,10 +33,10 @@ railway variables set `
   "JWT_EXPIRES_IN=7d" `
   "PORT=3333" `
   "NODE_ENV=production" `
-  "CORS_ORIGIN=http://localhost:3000"
+  "CORS_ORIGIN=https://english-dictionary-web.vercel.app"
 
 Write-Host ""
-Write-Host "Set DATABASE_URL and REDIS_URL in Railway UI using:" -ForegroundColor Yellow
+Write-Host "Set database variables in Railway (if not set yet):" -ForegroundColor Yellow
 Write-Host '  DATABASE_URL=${{Postgres.DATABASE_URL}}'
 Write-Host '  REDIS_URL=${{Redis.REDIS_URL}}'
 Write-Host ""
@@ -45,27 +44,15 @@ Write-Host ""
 Write-Host "Generating public domain for API..." -ForegroundColor Cyan
 railway domain 2>$null
 
-Write-Host "Deploying API from repo root (uses railway.toml -> Dockerfile)..." -ForegroundColor Cyan
-railway up --detach
+Write-Host "Deploying API (root Dockerfile + railway.toml)..." -ForegroundColor Cyan
+railway redeploy --from-source -y
 
 Write-Host ""
-Write-Host "=== dictionary-web ===" -ForegroundColor Green
-railway service link dictionary-web
-
-$apiUrl = "https://dictionary-api-production-d35d.up.railway.app"
-Write-Host "Setting web variables (API: $apiUrl)..." -ForegroundColor Cyan
-railway variables set "NEXT_PUBLIC_API_URL=$apiUrl" "NODE_ENV=production" "PORT=3000"
-
-Write-Host "Generating public domain for web..." -ForegroundColor Cyan
-railway domain 2>$null
-
-Write-Host "Deploying frontend (frontend/ as archive root)..." -ForegroundColor Cyan
-railway up ./frontend --path-as-root --detach -y
-
+Write-Host "=== Vercel (frontend) ===" -ForegroundColor Green
+Write-Host "Deploy frontend separately:" -ForegroundColor Yellow
+Write-Host "  cd frontend"
+Write-Host "  vercel link --yes -p english-dictionary-web"
+Write-Host '  echo "https://your-api.up.railway.app" | vercel env add NEXT_PUBLIC_API_URL production'
+Write-Host "  vercel --prod"
 Write-Host ""
-Write-Host "In Railway UI for dictionary-web (GitHub autodeploy):" -ForegroundColor Yellow
-Write-Host "  Settings -> Config file: /railway.web.toml"
-Write-Host "  Or Root Directory: frontend + Config file: /frontend/railway.toml"
-Write-Host ""
-Write-Host "Update API CORS_ORIGIN with the web URL, then redeploy API." -ForegroundColor Green
-Write-Host "Import words: railway service (api) && railway run npm run import:words" -ForegroundColor Green
+Write-Host "Import words: bash scripts/import-words.sh   (or: npm run import:words:remote)" -ForegroundColor Green

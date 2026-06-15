@@ -2,9 +2,11 @@
 
 Frontend for **English Dictionary** — word search, paginated dictionary, favorites, history, and authentication, with i18n support (pt-BR, en, es).
 
+**Production:** https://english-dictionary-web.vercel.app
+
 ## Stack
 
-- Next.js 15 · App Router · React 19
+- Next.js 15 · App Router · React 19 · Node.js 22
 - TanStack Query · Axios
 - Shadcn UI · TailwindCSS
 - next-intl · next-themes
@@ -12,16 +14,38 @@ Frontend for **English Dictionary** — word search, paginated dictionary, favor
 
 ## Prerequisites
 
-- Node.js **20+**
-- API running at http://localhost:3333
+- Node.js **22+**
+- API running at http://localhost:3333 (local) or Railway URL (production)
 - **npm** or **Yarn**
 
 ## Setup
 
+### npm
+
 ```bash
 cd frontend
 cp .env.example .env.local
+npm install --legacy-peer-deps
 ```
+
+### Yarn
+
+From the monorepo root (recommended — workspaces):
+
+```bash
+yarn install
+cp frontend/.env.example frontend/.env.local
+```
+
+Or only the frontend package:
+
+```bash
+cd frontend
+cp .env.example .env.local
+yarn install
+```
+
+> Peer dependencies: `frontend/.npmrc` sets `legacy-peer-deps=true` (npm and Yarn Classic). Yarn Berry uses `.yarnrc.yml` at the repo root with `nodeLinker: node-modules`.
 
 ### Environment variables
 
@@ -32,13 +56,19 @@ cp .env.example .env.local
 ## Run
 
 ```bash
-# npm
-npm install
+# npm (inside frontend/)
 npm run dev
+npm run build
+npm test
 
-# Yarn (monorepo root with workspaces)
-yarn install
-yarn dev:frontend
+# Yarn (inside frontend/)
+yarn dev
+yarn build
+yarn test
+
+# Yarn or npm from monorepo root
+yarn dev:frontend    # or: npm run dev:frontend
+yarn build           # builds backend + frontend
 ```
 
 Local app: http://localhost:3000
@@ -53,8 +83,6 @@ Local app: http://localhost:3000
 | `lint` | ESLint (Next.js) |
 | `test` | Unit tests (Vitest) |
 | `test:watch` | Vitest watch mode |
-
-From monorepo root: `npm run dev:frontend` or `yarn dev:frontend`.
 
 ## Routes
 
@@ -77,33 +105,78 @@ From monorepo root: `npm run dev:frontend` or `yarn dev:frontend`.
 - **Light/dark theme** (cookie `app-theme`)
 - **i18n** — locales `en`, `pt-BR`, `es` (cookie `app_locale`)
 
+## Deploy (Vercel)
+
+Production frontend runs on **Vercel**, not Docker.
+
+### Dashboard
+
+1. Import https://github.com/luccadumas/english-dictionary
+2. **Root Directory:** `frontend`
+3. Environment variable: `NEXT_PUBLIC_API_URL` = Railway API URL
+4. Deploy
+
+### CLI
+
+```bash
+cd frontend
+vercel link --yes -p english-dictionary-web
+echo "https://your-api.up.railway.app" | vercel env add NEXT_PUBLIC_API_URL production
+vercel --prod
+```
+
+Settings in `vercel.json`:
+
+- Node 22 (via `engines` in `package.json`)
+- Region: `gru1` (São Paulo)
+- Install: `npm install --legacy-peer-deps` (Vercel; local dev also supports Yarn — see [Setup](#setup))
+
+After deploy, set Railway `CORS_ORIGIN` to your Vercel URL.
+
+## Docker (local only)
+
+`frontend/Dockerfile` is for **local full-stack simulation** via docker-compose, not production deploy.
+
+```bash
+# From monorepo root
+docker compose --profile prod up --build web-prod api-prod postgres redis
+```
+
+Build manually:
+
+```bash
+docker build -t dictionary-web ./frontend --target runner \
+  --build-arg NEXT_PUBLIC_API_URL=http://localhost:3333
+```
+
 ## Structure
 
 ```
-frontend/src/
-├── app/                  # App Router routes
-│   └── [locale]/         # i18n layout
-├── components/           # Feature UI (dictionary, auth, layout, ...)
-├── lib/
-│   ├── api/              # Axios client
-│   ├── hooks/            # Domain hooks
-│   └── query/            # Prefetch and pagination
-├── messages/             # Translations (pt-BR, en, es)
-└── types/                # TypeScript types
+frontend/
+├── Dockerfile           # Local Docker (standalone output)
+├── vercel.json          # Vercel production config
+├── next.config.mjs
+└── src/
+    ├── app/[locale]/    # App Router + i18n
+    ├── components/
+    ├── lib/
+    ├── messages/
+    └── types/
 ```
 
 ## Tests
 
 ```bash
+# npm
 npm test
 npm run build
 
-# or
+# Yarn
 yarn test
 yarn build
 ```
 
-From monorepo root: `npm run test:all` / `yarn test:all` (includes backend).
+From monorepo root: `npm run test:all` or `yarn test:all`
 
 ## Monorepo documentation
 

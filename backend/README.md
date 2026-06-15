@@ -2,7 +2,8 @@
 
 REST API for **English Dictionary** — word lookup, JWT authentication, search history, async favorites, Redis caching, and cursor pagination.
 
-Interactive docs: `{API_URL}/docs` (Swagger/OpenAPI 3.0).
+**Production:** https://dictionary-api-production-d35d.up.railway.app  
+**Swagger:** https://dictionary-api-production-d35d.up.railway.app/docs
 
 ## Stack
 
@@ -14,7 +15,7 @@ Interactive docs: `{API_URL}/docs` (Swagger/OpenAPI 3.0).
 ## Prerequisites
 
 - Node.js **22+**
-- Docker (Postgres + Redis) — start from monorepo root: `npm run dev:infra` or `yarn dev:infra`
+- Docker (Postgres + Redis) — start from monorepo root: `npm run dev:infra`
 - **npm** or **Yarn**
 
 ## Setup
@@ -22,10 +23,12 @@ Interactive docs: `{API_URL}/docs` (Swagger/OpenAPI 3.0).
 ```bash
 # From monorepo root
 npm run dev:infra
-# or: yarn dev:infra
 
 cd backend
 cp .env.example .env
+npm install
+npx prisma migrate dev
+npm run import:words   # optional — ~370k words
 ```
 
 ### Environment variables
@@ -36,41 +39,23 @@ cp .env.example .env
 | `REDIS_HOST` | Redis host | `localhost` |
 | `REDIS_PORT` | Redis port | `6379` |
 | `REDIS_PASSWORD` | Redis password | _(empty in dev)_ |
+| `REDIS_URL` | Full Redis URL (Railway) | _(optional locally)_ |
 | `JWT_SECRET` | JWT secret | _(required)_ |
 | `JWT_EXPIRES_IN` | Token expiration | `7d` |
 | `PORT` | API port | `3333` |
 | `NODE_ENV` | Environment | `development` |
-| `CORS_ORIGIN` | Allowed origin (frontend) | `http://localhost:3000` |
-
-### Database and seed
-
-```bash
-# npm
-npm install
-npx prisma migrate dev
-npm run import:words   # optional — ~370k words
-
-# Yarn
-yarn install
-yarn prisma:migrate
-yarn import:words
-```
+| `CORS_ORIGIN` | Allowed origin(s) — comma-separated | `http://localhost:3000` |
 
 ## Run
 
 ```bash
-# Development (watch)
 npm run start:dev
-# or: yarn start:dev
-
-# Production
-npm run build && npm run start:prod
 ```
 
 Local API: http://localhost:3333  
 Swagger: http://localhost:3333/docs
 
-You can also start from the monorepo root: `npm run dev:backend` or `yarn dev:backend`.
+From monorepo root: `npm run dev:backend`
 
 ## Scripts
 
@@ -81,11 +66,9 @@ You can also start from the monorepo root: `npm run dev:backend` or `yarn dev:ba
 | `build` | Compile TypeScript |
 | `test` | Unit tests (Jest) |
 | `test:e2e` | E2E integration tests |
-| `test:cov` | Test coverage |
 | `lint` | ESLint |
 | `prisma:migrate` | Dev migrations |
 | `prisma:deploy` | Production migrations |
-| `prisma:studio` | Prisma Studio |
 | `import:words` | Import words into the database |
 
 ## Main endpoints
@@ -102,23 +85,70 @@ You can also start from the monorepo root: `npm run dev:backend` or `yarn dev:ba
 | `GET` | `/user/me/history` | User search history |
 | `GET` | `/user/me/favorites` | User favorites |
 
-Paginated responses include: `results`, `totalDocs`, `previous`, `next`, `hasPrev`, `hasNext`.
-
 Observability headers: `x-request-id`, `x-cache`, `x-response-time`.
+
+## Deploy (Railway)
+
+The API runs on **Railway** using the root `Dockerfile` (monorepo build context).
+
+### Files
+
+| File | Purpose |
+|------|---------|
+| `/Dockerfile` | Production image (copies `backend/`) |
+| `/railway.toml` | Build and deploy config |
+| `backend/Dockerfile` | Same image, used by `docker-compose` |
+
+### Variables (production)
+
+```env
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+REDIS_URL=${{Redis.REDIS_URL}}
+JWT_SECRET=<strong-secret>
+JWT_EXPIRES_IN=7d
+PORT=3333
+NODE_ENV=production
+CORS_ORIGIN=https://english-dictionary-web.vercel.app
+```
+
+See `backend/.env.production.example` for a template.
+
+### One-time word import (production)
+
+```bash
+./scripts/import-words.sh
+# or: npm run import:words:remote
+```
+
+Uses `railway run` with production `DATABASE_URL` (~370k words, several minutes).
+
+Or run `.\scripts\railway-setup.ps1` from the monorepo root.
+
+## Docker (local)
+
+```bash
+# API only (with infra)
+docker compose --profile prod up --build api-prod postgres redis
+
+# Build image manually
+docker build -t dictionary-api ./backend --target runner
+```
+
+Entrypoint runs `prisma migrate deploy` then starts the app (`docker-entrypoint.sh`).
 
 ## Structure
 
 ```
 backend/
+├── Dockerfile
+├── docker-entrypoint.sh
 ├── src/
 │   ├── modules/          # auth, users, dictionary, favorites, history
 │   ├── infra/            # prisma, redis, queue
-│   └── shared/           # DTOs, filters, utils
+│   └── shared/
 ├── prisma/
-├── scripts/              # import:words
+├── scripts/
 └── test/
-    ├── e2e/
-    └── helpers/
 ```
 
 ## Tests
@@ -126,13 +156,9 @@ backend/
 ```bash
 npm test
 npm run test:e2e
-
-# or
-yarn test
-yarn test:e2e
 ```
 
-From monorepo root: `npm run test` / `yarn test`.
+From monorepo root: `npm run test:all`
 
 ## Monorepo documentation
 

@@ -16,7 +16,8 @@
     "test:e2e": "node scripts/run-workspace.mjs backend test:e2e",
     "test:all": "node scripts/run-workspace.mjs backend test && node scripts/run-workspace.mjs backend test:e2e && node scripts/run-workspace.mjs frontend test",
     "lint": "node scripts/run-workspace.mjs backend lint && node scripts/run-workspace.mjs frontend lint",
-    "import:words": "node scripts/run-workspace.mjs backend import:words"
+    "import:words": "node scripts/run-workspace.mjs backend import:words",
+    "import:words:remote": "bash scripts/import-words.sh"
   },
   "engines": {
     "node": ">=22"

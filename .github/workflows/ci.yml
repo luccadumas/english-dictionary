@@ -95,7 +95,7 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
       - name: Lint
         run: npm run lint
@@ -114,10 +114,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build backend image
+      - name: Build backend image (docker-compose context)
         run: docker build -t dictionary-api ./backend --target runner
 
-      - name: Build frontend image
+      - name: Build frontend image (local simulation)
         run: docker build -t dictionary-web ./frontend --target runner --build-arg NEXT_PUBLIC_API_URL=http://localhost:3333
 
   deploy:
