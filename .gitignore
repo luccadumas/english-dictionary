@@ -9,7 +9,7 @@ dist/
 out/
 build/
 
-# Environment files
+# Environment files (copy from .env.example before running)
 .env
 .env.local
 .env.*.local
@@ -45,7 +45,5 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# Prisma
+# Prisma (local sqlite dev db, if used)
 prisma/migrations/dev.db
-
-.vercel
