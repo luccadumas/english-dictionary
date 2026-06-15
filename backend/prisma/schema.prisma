@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  name      String
+  email     String     @unique
+  password  String
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  favorites Favorite[]
+  history   History[]
+
+  @@map("users")
+}
+
+model Word {
+  id        Int        @id @default(autoincrement())
+  word      String     @unique
+  createdAt DateTime   @default(now()) @map("created_at")
+  favorites Favorite[]
+  history   History[]
+
+  @@map("words")
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  wordId    Int      @map("word_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word      Word     @relation(fields: [wordId], references: [id])
+
+  @@unique([userId, wordId])
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("favorites")
+}
+
+model History {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  wordId    Int      @map("word_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word      Word     @relation(fields: [wordId], references: [id])
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("history")
+}

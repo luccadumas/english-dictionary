@@ -1,0 +1,24 @@
+{
+  "name": "dictionary",
+  "version": "1.0.0",
+  "private": true,
+  "description": "English Dictionary - monorepo (API + Web)",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:infra": "docker compose --profile dev up -d postgres redis",
+    "dev:backend": "node scripts/run-workspace.mjs backend start:dev",
+    "dev:frontend": "node scripts/run-workspace.mjs frontend dev",
+    "build": "node scripts/run-workspace.mjs backend build && node scripts/run-workspace.mjs frontend build",
+    "test": "node scripts/run-workspace.mjs backend test",
+    "test:e2e": "node scripts/run-workspace.mjs backend test:e2e",
+    "test:all": "node scripts/run-workspace.mjs backend test && node scripts/run-workspace.mjs backend test:e2e && node scripts/run-workspace.mjs frontend test",
+    "lint": "node scripts/run-workspace.mjs backend lint && node scripts/run-workspace.mjs frontend lint",
+    "import:words": "node scripts/run-workspace.mjs backend import:words"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

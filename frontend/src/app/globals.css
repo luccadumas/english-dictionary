@@ -1,0 +1,119 @@
+@import '../styles/theme.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+}
+
+@layer utilities {
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .focus\:not-sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  .app-grid-bg {
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      hsl(var(--surface-grid-dot) / 0.12) 1px,
+      transparent 0
+    );
+    background-size: 24px 24px;
+  }
+
+  .glass-panel {
+    @apply border border-border/60 bg-background/80 backdrop-blur-md;
+  }
+
+  .brand-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--gradient-brand-from)) 0%,
+      hsl(var(--gradient-brand-via)) 50%,
+      hsl(var(--gradient-brand-to)) 100%
+    );
+  }
+
+  .brand-gradient-soft {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--surface-gradient-soft-from) / 0.12) 0%,
+      hsl(var(--surface-gradient-soft-to) / 0.06) 100%
+    );
+  }
+
+  .brand-text-gradient {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--gradient-text-from)) 0%,
+      hsl(var(--gradient-text-to)) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  @keyframes route-progress {
+    0% {
+      transform: translateX(-100%);
+    }
+    50% {
+      transform: translateX(-20%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .animate-route-progress {
+    animation: route-progress 1.2s ease-in-out infinite;
+  }
+
+  .route-progress-bar {
+    width: 40%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .brand-gradient,
+    .brand-gradient-soft,
+    .brand-text-gradient {
+      background: hsl(var(--brand));
+    }
+
+    .brand-text-gradient {
+      -webkit-background-clip: unset;
+      background-clip: unset;
+      color: hsl(var(--brand));
+    }
+  }
+}

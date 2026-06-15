@@ -1,0 +1,106 @@
+/**
+ * Tema global - Dictionary App
+ *
+ * Edite apenas "Brand primitives" para rethemar o app inteiro.
+ * Componentes devem usar tokens semânticos (primary, brand, link…),
+ * nunca os primitivos diretamente.
+ */
+
+:root {
+    color-scheme: light;
+
+    /* ── Brand primitives ── */
+    --color-brand-green: 119 100% 71%;
+    --color-brand-purple: 264 100% 47%;
+    --color-brand-purple-dark: 264 100% 25%;
+    --color-brand-purple-mid: 264 100% 35%;
+    --color-brand-green-mid: 119 80% 45%;
+
+    /* ── Semânticos ── */
+    --background: 0 0% 100%;
+    --foreground: 264 65% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 264 65% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 264 65% 12%;
+
+    --primary: var(--color-brand-green);
+    --primary-foreground: var(--color-brand-purple-dark);
+    --brand: var(--color-brand-purple);
+    --brand-foreground: 0 0% 100%;
+
+    --secondary: 119 40% 96%;
+    --secondary-foreground: 264 65% 12%;
+    --muted: 119 20% 96%;
+    --muted-foreground: 264 15% 42%;
+    --accent: 264 100% 97%;
+    --accent-foreground: var(--color-brand-purple);
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 119 20% 90%;
+    --input: 119 15% 88%;
+    --ring: var(--color-brand-green);
+
+    --link: var(--color-brand-purple);
+    --nav-active: var(--color-brand-purple);
+    --nav-active-foreground: 0 0% 100%;
+
+    --sidebar: 119 30% 98%;
+    --sidebar-foreground: 264 65% 12%;
+
+    --radius: 0.75rem;
+
+    --surface-grid-dot: var(--color-brand-green);
+    --surface-gradient-soft-from: var(--color-brand-green);
+    --surface-gradient-soft-to: var(--color-brand-purple);
+
+    --gradient-brand-from: var(--color-brand-purple);
+    --gradient-brand-via: var(--color-brand-purple-mid);
+    --gradient-brand-to: var(--color-brand-green-mid);
+    --gradient-text-from: var(--color-brand-purple);
+    --gradient-text-to: var(--color-brand-green);
+
+    --shadow-soft: 0 1px 3px 0 hsl(var(--color-brand-purple) / 0.04),
+      0 1px 2px -1px hsl(var(--color-brand-purple) / 0.04);
+    --shadow-card: 0 4px 6px -1px hsl(var(--color-brand-purple) / 0.06),
+      0 2px 4px -2px hsl(var(--color-brand-green) / 0.08);
+    --shadow-elevated: 0 10px 40px -10px hsl(var(--color-brand-purple) / 0.15);
+    --shadow-brand: 0 4px 20px -4px hsl(var(--color-brand-green) / 0.35);
+  }
+
+  .dark {
+    color-scheme: dark;
+
+    --color-brand-green: 119 100% 71%;
+    --color-brand-purple: 264 100% 65%;
+    --color-brand-purple-dark: 264 100% 75%;
+    --color-brand-purple-mid: 264 100% 45%;
+    --color-brand-green-mid: 119 80% 50%;
+
+    --background: 264 45% 6%;
+    --foreground: 0 0% 98%;
+    --card: 264 40% 9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 264 40% 9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary-foreground: 264 100% 15%;
+
+    --secondary: 264 30% 14%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 264 25% 14%;
+    --muted-foreground: 264 10% 65%;
+    --accent: 264 40% 16%;
+    --accent-foreground: var(--color-brand-green);
+
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 264 25% 16%;
+    --input: 264 25% 16%;
+
+    --sidebar: 264 45% 5%;
+    --sidebar-foreground: 0 0% 98%;
+}

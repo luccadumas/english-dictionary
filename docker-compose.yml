@@ -1,0 +1,148 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: dictionary_postgres
+    restart: unless-stopped
+    profiles: [dev, prod]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dictionary
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dictionary_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: dictionary_redis
+    restart: unless-stopped
+    profiles: [dev, prod]
+    command: redis-server --appendonly yes
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dictionary_network
+
+  api-dev:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: builder
+    container_name: dictionary_api_dev
+    profiles: [dev]
+    restart: unless-stopped
+    command: npm run start:dev
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/dictionary
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      PORT: 3333
+      NODE_ENV: development
+    ports:
+      - '3333:3333'
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/prisma:/app/prisma
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - dictionary_network
+
+  api-prod:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: runner
+    container_name: dictionary_api_prod
+    profiles: [prod]
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/dictionary
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      PORT: 3333
+      NODE_ENV: production
+    ports:
+      - '3333:3333'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3333/']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - dictionary_network
+
+  web-dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: builder
+    container_name: dictionary_web_dev
+    profiles: [dev]
+    restart: unless-stopped
+    command: npm run dev
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3333
+      NODE_ENV: development
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./frontend/src:/app/src
+    depends_on:
+      - api-dev
+    networks:
+      - dictionary_network
+
+  web-prod:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: runner
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:3333
+    container_name: dictionary_web_prod
+    profiles: [prod]
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+    ports:
+      - '3000:3000'
+    depends_on:
+      - api-prod
+    networks:
+      - dictionary_network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  dictionary_network:
+    driver: bridge
