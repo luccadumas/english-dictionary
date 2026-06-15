@@ -3,7 +3,7 @@ WORKDIR /app
 
 FROM base AS deps
 COPY package*.json .npmrc ./
-RUN npm ci
+RUN npm ci && npm install --no-save @next/swc-linux-x64-gnu
 
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
