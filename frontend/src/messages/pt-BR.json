@@ -165,7 +165,22 @@
     "network": "Erro de rede. Tente novamente.",
     "unauthorized": "Você não está autorizado a realizar esta ação",
     "notFound": "Recurso não encontrado",
-    "pageLoad": "Algo deu errado ao carregar esta página."
+    "pageLoad": "Algo deu errado ao carregar esta página.",
+    "api": {
+      "EMAIL_ALREADY_IN_USE": "E-mail já está em uso",
+      "INVALID_CREDENTIALS": "E-mail ou senha inválidos",
+      "FAVORITE_ALREADY_EXISTS": "Esta palavra já está nos seus favoritos",
+      "FAVORITE_NOT_FOUND": "Favorito não encontrado",
+      "USER_NOT_FOUND": "Usuário não encontrado",
+      "WORD_NOT_FOUND": "Palavra \"{word}\" não encontrada",
+      "AUDIO_NOT_FOUND": "Áudio não encontrado para \"{word}\"",
+      "INVALID_CURSOR": "Cursor de paginação inválido",
+      "AUTHENTICATION_REQUIRED": "Autenticação necessária",
+      "AUTHENTICATION_FAILED": "Falha na autenticação",
+      "DICTIONARY_SERVICE_UNAVAILABLE": "Serviço de dicionário temporariamente indisponível",
+      "AUDIO_SERVICE_UNAVAILABLE": "Serviço de áudio temporariamente indisponível",
+      "UNKNOWN": "Algo deu errado"
+    }
   },
   "theme": {
     "switchToLight": "Mudar para modo claro",

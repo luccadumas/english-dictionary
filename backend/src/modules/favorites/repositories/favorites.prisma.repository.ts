@@ -1,6 +1,8 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '@/infra/database/prisma/prisma.service';
+import { ApiErrorCode } from '@/shared/errors/api-error-codes';
+import { apiException } from '@/shared/errors/api.exception';
 import {
   IFavoritesRepository,
   FavoritesListResult,
@@ -24,7 +26,11 @@ export class FavoritesPrismaRepository implements IFavoritesRepository {
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2002'
       ) {
-        throw new ConflictException('Word is already in favorites');
+        throw apiException(
+          HttpStatus.CONFLICT,
+          ApiErrorCode.FAVORITE_ALREADY_EXISTS,
+          'Word is already in favorites',
+        );
       }
       throw error;
     }
@@ -34,7 +40,13 @@ export class FavoritesPrismaRepository implements IFavoritesRepository {
     const record = await this.prisma.favorite.findFirst({
       where: { userId, wordId },
     });
-    if (!record) throw new NotFoundException('Favorite not found');
+    if (!record) {
+      throw apiException(
+        HttpStatus.NOT_FOUND,
+        ApiErrorCode.FAVORITE_NOT_FOUND,
+        'Favorite not found',
+      );
+    }
     await this.prisma.favorite.delete({ where: { id: record.id } });
   }
 

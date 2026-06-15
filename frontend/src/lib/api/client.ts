@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { ApiError } from '@/lib/api/api-error';
 
 const API_BASE_URL =
   typeof window !== 'undefined'
@@ -27,7 +28,10 @@ apiClient.interceptors.response.use(
       }
       const message =
         error.response?.data?.message ?? error.message ?? 'Unknown error';
-      throw new Error(message);
+      throw ApiError.fromPayload(
+        error.response?.data ?? { message },
+        typeof message === 'string' ? message : 'Unknown error',
+      );
     }
     throw error;
   },

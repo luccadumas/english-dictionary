@@ -165,7 +165,22 @@
     "network": "Error de red. Inténtalo de nuevo.",
     "unauthorized": "No estás autorizado para realizar esta acción",
     "notFound": "Recurso no encontrado",
-    "pageLoad": "Algo salió mal al cargar esta página."
+    "pageLoad": "Algo salió mal al cargar esta página.",
+    "api": {
+      "EMAIL_ALREADY_IN_USE": "El correo electrónico ya está en uso",
+      "INVALID_CREDENTIALS": "Correo electrónico o contraseña inválidos",
+      "FAVORITE_ALREADY_EXISTS": "Esta palabra ya está en tus favoritos",
+      "FAVORITE_NOT_FOUND": "Favorito no encontrado",
+      "USER_NOT_FOUND": "Usuario no encontrado",
+      "WORD_NOT_FOUND": "Palabra \"{word}\" no encontrada",
+      "AUDIO_NOT_FOUND": "Audio no encontrado para \"{word}\"",
+      "INVALID_CURSOR": "Cursor de paginación inválido",
+      "AUTHENTICATION_REQUIRED": "Autenticación requerida",
+      "AUTHENTICATION_FAILED": "Error de autenticación",
+      "DICTIONARY_SERVICE_UNAVAILABLE": "Servicio de diccionario temporalmente no disponible",
+      "AUDIO_SERVICE_UNAVAILABLE": "Servicio de audio temporalmente no disponible",
+      "UNKNOWN": "Algo salió mal"
+    }
   },
   "theme": {
     "switchToLight": "Cambiar a modo claro",

@@ -27,6 +27,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.message
         : 'Internal server error';
 
+    let code: string | undefined;
+    let params: Record<string, string | number> | undefined;
+
     if (exception instanceof HttpException) {
       const exceptionResponse = exception.getResponse();
       if (
@@ -34,8 +37,25 @@ export class AllExceptionsFilter implements ExceptionFilter {
         exceptionResponse !== null &&
         'message' in exceptionResponse
       ) {
-        const msg = (exceptionResponse as { message: unknown }).message;
+        const responseBody = exceptionResponse as {
+          message: unknown;
+          code?: unknown;
+          params?: unknown;
+        };
+        const msg = responseBody.message;
         message = Array.isArray(msg) ? msg.join(', ') : String(msg);
+
+        if (typeof responseBody.code === 'string') {
+          code = responseBody.code;
+        }
+
+        if (
+          responseBody.params &&
+          typeof responseBody.params === 'object' &&
+          !Array.isArray(responseBody.params)
+        ) {
+          params = responseBody.params as Record<string, string | number>;
+        }
       }
     }
 
@@ -46,6 +66,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
       );
     }
 
-    response.status(status).json({ message });
+    response.status(status).json({
+      message,
+      ...(code ? { code } : {}),
+      ...(params ? { params } : {}),
+    });
   }
 }

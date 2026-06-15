@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { HttpException } from '@nestjs/common';
 import {
   encodeCursor,
   decodeCursor,
@@ -15,7 +15,7 @@ describe('cursor.util', () => {
     });
 
     it('throws on invalid cursor', () => {
-      expect(() => decodeCursor('invalid')).toThrow(BadRequestException);
+      expect(() => decodeCursor('invalid')).toThrow(HttpException);
     });
   });
 

@@ -3,8 +3,8 @@ import {
   Get,
   Query,
   UseGuards,
-  NotFoundException,
   Inject,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -28,6 +28,8 @@ import {
   ErrorResponseDto,
 } from '@/shared/dtos/cursor-paginated.dto';
 import { PaginationQueryDto } from '@/shared/dtos/pagination-query.dto';
+import { ApiErrorCode } from '@/shared/errors/api-error-codes';
+import { apiException } from '@/shared/errors/api.exception';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -47,7 +49,13 @@ export class UsersController {
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
   async getProfile(@CurrentUser() user: JwtPayload): Promise<UserResponseDto> {
     const found = await this.usersRepository.findById(user.sub);
-    if (!found) throw new NotFoundException('User not found');
+    if (!found) {
+      throw apiException(
+        HttpStatus.NOT_FOUND,
+        ApiErrorCode.USER_NOT_FOUND,
+        'User not found',
+      );
+    }
     return found.toResponse() as UserResponseDto;
   }
 

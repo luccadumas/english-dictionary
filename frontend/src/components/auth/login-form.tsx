@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/hooks/auth/use-auth';
+import { useTranslateApiError } from '@/lib/hooks/use-translate-api-error';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +16,7 @@ export function LoginForm() {
   const t = useTranslations('auth');
   const tValidation = useTranslations('validation');
   const { signIn, isSigningIn } = useAuth();
+  const translateApiError = useTranslateApiError();
 
   const loginSchema = useMemo(
     () => createLoginSchema((key) => tValidation(key)),
@@ -34,7 +36,7 @@ export function LoginForm() {
       await signIn(data.email, data.password);
       toast.success(t('welcomeBack'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('signInFailed'));
+      toast.error(translateApiError(err));
     }
   };
 

@@ -1,4 +1,4 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, Inject } from '@nestjs/common';
 import {
   IFavoritesRepository,
   FAVORITES_REPOSITORY,
@@ -7,6 +7,8 @@ import {
   IWordsRepository,
   WORDS_REPOSITORY,
 } from '@/modules/dictionary/repositories/words.repository.interface';
+import { ApiErrorCode } from '@/shared/errors/api-error-codes';
+import { apiException } from '@/shared/errors/api.exception';
 
 @Injectable()
 export class RemoveFavoriteUseCase {
@@ -20,7 +22,11 @@ export class RemoveFavoriteUseCase {
   async execute(userId: string, word: string): Promise<void> {
     const wordRecord = await this.wordsRepository.findByWord(word);
     if (!wordRecord) {
-      throw new NotFoundException('Favorite not found');
+      throw apiException(
+        HttpStatus.NOT_FOUND,
+        ApiErrorCode.FAVORITE_NOT_FOUND,
+        'Favorite not found',
+      );
     }
     await this.favoritesRepository.removeFavorite(userId, wordRecord.id);
   }

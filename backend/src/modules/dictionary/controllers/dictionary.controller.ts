@@ -9,9 +9,8 @@ import {
   HttpCode,
   HttpStatus,
   Res,
-  NotFoundException,
   ParseIntPipe,
-  BadGatewayException,
+  HttpException,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -48,6 +47,8 @@ import {
   extractAudioUrl,
   rewriteWordAudioUrls,
 } from '../utils/word-audio.util';
+import { ApiErrorCode } from '@/shared/errors/api-error-codes';
+import { apiException } from '@/shared/errors/api.exception';
 
 @ApiTags('dictionary')
 @ApiBearerAuth()
@@ -108,7 +109,12 @@ export class DictionaryController {
     const audioUrl = extractAudioUrl(data, index);
 
     if (!audioUrl) {
-      throw new NotFoundException(`Audio not found for word "${word}"`);
+      throw apiException(
+        HttpStatus.NOT_FOUND,
+        ApiErrorCode.AUDIO_NOT_FOUND,
+        `Audio not found for word "${word}"`,
+        { word },
+      );
     }
 
     try {
@@ -120,8 +126,12 @@ export class DictionaryController {
       );
       response.data.pipe(res);
     } catch (error) {
-      if (error instanceof BadGatewayException) throw error;
-      throw new BadGatewayException('Audio service temporarily unavailable');
+      if (error instanceof HttpException) throw error;
+      throw apiException(
+        HttpStatus.BAD_GATEWAY,
+        ApiErrorCode.AUDIO_SERVICE_UNAVAILABLE,
+        'Audio service temporarily unavailable',
+      );
     }
   }
 

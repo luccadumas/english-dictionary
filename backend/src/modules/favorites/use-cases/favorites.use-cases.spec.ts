@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { ConflictException, HttpException } from '@nestjs/common';
 import { AddFavoriteUseCase } from './add-favorite.use-case';
 import { RemoveFavoriteUseCase } from './remove-favorite.use-case';
 import { ListFavoritesUseCase } from './list-favorites.use-case';
@@ -81,12 +81,12 @@ describe('Favorites Use Cases', () => {
       ).resolves.toBeUndefined();
     });
 
-    it('should throw NotFoundException if word does not exist in db', async () => {
+    it('should throw HttpException if word does not exist in db', async () => {
       mockWordsRepository.findByWord.mockResolvedValue(null);
 
       await expect(
         removeFavoriteUseCase.execute('user-1', 'nonexistent'),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(HttpException);
       expect(mockFavoritesRepository.removeFavorite).not.toHaveBeenCalled();
     });
   });

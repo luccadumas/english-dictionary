@@ -1,15 +1,10 @@
 import { apiClient } from './client';
+import { ApiError } from '@/lib/api/api-error';
 import type { SignInPayload, SignUpPayload, User } from '@/types/auth.types';
 
 async function parseAuthError(response: Response): Promise<never> {
   const data = await response.json().catch(() => ({}));
-  const message =
-    typeof data.message === 'string'
-      ? data.message
-      : Array.isArray(data.message)
-        ? data.message.join(', ')
-        : 'Authentication failed';
-  throw new Error(message);
+  throw ApiError.fromPayload(data, 'Authentication failed');
 }
 
 export const authApi = {

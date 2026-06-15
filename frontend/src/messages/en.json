@@ -165,7 +165,22 @@
     "network": "Network error. Please try again.",
     "unauthorized": "You are not authorized to perform this action",
     "notFound": "Resource not found",
-    "pageLoad": "Something went wrong loading this page."
+    "pageLoad": "Something went wrong loading this page.",
+    "api": {
+      "EMAIL_ALREADY_IN_USE": "Email already in use",
+      "INVALID_CREDENTIALS": "Invalid email or password",
+      "FAVORITE_ALREADY_EXISTS": "This word is already in your favorites",
+      "FAVORITE_NOT_FOUND": "Favorite not found",
+      "USER_NOT_FOUND": "User not found",
+      "WORD_NOT_FOUND": "Word \"{word}\" not found",
+      "AUDIO_NOT_FOUND": "Audio not found for \"{word}\"",
+      "INVALID_CURSOR": "Invalid pagination cursor",
+      "AUTHENTICATION_REQUIRED": "Authentication required",
+      "AUTHENTICATION_FAILED": "Authentication failed",
+      "DICTIONARY_SERVICE_UNAVAILABLE": "Dictionary service temporarily unavailable",
+      "AUDIO_SERVICE_UNAVAILABLE": "Audio service temporarily unavailable",
+      "UNKNOWN": "Something went wrong"
+    }
   },
   "theme": {
     "switchToLight": "Switch to light mode",

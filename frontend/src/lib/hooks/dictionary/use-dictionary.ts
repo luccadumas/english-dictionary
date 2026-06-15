@@ -10,6 +10,7 @@ import { dictionaryApi } from '@/lib/api/dictionary';
 import { HISTORY_KEYS } from '@/lib/hooks/history/use-history';
 import { getCursorNextPageParam } from '@/lib/query/cursor-pagination';
 import { pollFavoriteStatus } from '@/lib/query/poll-favorite-status';
+import { useTranslateApiError } from '@/lib/hooks/use-translate-api-error';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 export const DICTIONARY_KEYS = {
@@ -62,6 +63,7 @@ export function useIsFavorite(word: string, options?: { enabled?: boolean }) {
 export function useToggleFavorite(word?: string) {
   const t = useTranslations('dictionary');
   const queryClient = useQueryClient();
+  const translateApiError = useTranslateApiError();
 
   const invalidate = async () => {
     await queryClient.invalidateQueries({ queryKey: ['favorites'] });
@@ -82,7 +84,7 @@ export function useToggleFavorite(word?: string) {
       }
       await invalidate();
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(translateApiError(err)),
   });
 
   const remove = useMutation({
@@ -95,7 +97,7 @@ export function useToggleFavorite(word?: string) {
       }
       await invalidate();
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(translateApiError(err)),
   });
 
   return { add, remove };

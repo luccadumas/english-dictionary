@@ -1,6 +1,8 @@
-import { Injectable, Logger, NotFoundException, BadGatewayException } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import axios, { type AxiosResponse } from 'axios';
 import type { Readable } from 'stream';
+import { ApiErrorCode } from '@/shared/errors/api-error-codes';
+import { apiException } from '@/shared/errors/api.exception';
 
 const FREE_DICT_BASE = 'https://api.dictionaryapi.dev/api/v2/entries/en';
 
@@ -15,14 +17,21 @@ export class FreeDictionaryApiService {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 404) {
-          throw new NotFoundException(`Word "${word}" not found`);
+          throw apiException(
+            HttpStatus.NOT_FOUND,
+            ApiErrorCode.WORD_NOT_FOUND,
+            `Word "${word}" not found`,
+            { word },
+          );
         }
         if (error.response?.status && error.response.status >= 500) {
           this.logger.error(
             `Dictionary API unavailable for "${word}"`,
             error.message,
           );
-          throw new BadGatewayException(
+          throw apiException(
+            HttpStatus.BAD_GATEWAY,
+            ApiErrorCode.DICTIONARY_SERVICE_UNAVAILABLE,
             'Dictionary service temporarily unavailable',
           );
         }
@@ -31,7 +40,12 @@ export class FreeDictionaryApiService {
         `Failed to fetch word "${word}" from Free Dictionary API`,
         error,
       );
-      throw new NotFoundException(`Word "${word}" not found`);
+      throw apiException(
+        HttpStatus.NOT_FOUND,
+        ApiErrorCode.WORD_NOT_FOUND,
+        `Word "${word}" not found`,
+        { word },
+      );
     }
   }
 
@@ -40,7 +54,11 @@ export class FreeDictionaryApiService {
       return await axios.get<Readable>(url, { responseType: 'stream' });
     } catch (error) {
       this.logger.error(`Failed to stream audio from ${url}`, error);
-      throw new BadGatewayException('Audio service temporarily unavailable');
+      throw apiException(
+        HttpStatus.BAD_GATEWAY,
+        ApiErrorCode.AUDIO_SERVICE_UNAVAILABLE,
+        'Audio service temporarily unavailable',
+      );
     }
   }
 }
