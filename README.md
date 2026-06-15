@@ -157,24 +157,23 @@ Detailed conventions in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 1. Publish to GitHub: [docs/GITHUB.md](docs/GITHUB.md)
 
-### Railway
-
-**API (`dictionary-api`)**
+### Railway (API)
 
 1. Connect repo → uses `/railway.toml` and root `Dockerfile`
 2. Add **PostgreSQL** and **Redis**
-3. Variables: `DATABASE_URL=${{Postgres.DATABASE_URL}}`, `REDIS_URL=${{Redis.REDIS_URL}}`, `JWT_SECRET`, `NODE_ENV=production`, `PORT=3333`, `CORS_ORIGIN=<web-url>`
+3. Variables: `DATABASE_URL=${{Postgres.DATABASE_URL}}`, `REDIS_URL=${{Redis.REDIS_URL}}`, `JWT_SECRET`, `NODE_ENV=production`, `PORT=3333`, `CORS_ORIGIN=<vercel-url>`
 4. Generate public domain → note API URL
 5. One-time: `railway run npm run import:words`
 
-**Web (`dictionary-web`)**
+### Vercel (frontend)
 
-1. Connect same repo
-2. **Settings → Source:** Root Directory `frontend` (or Config File `/railway.web.toml` at repo root)
-3. Variables: `NEXT_PUBLIC_API_URL=<api-url>`, `NODE_ENV=production`, `PORT=3000`
-4. Generate public domain → update API `CORS_ORIGIN` with this URL
+1. Import repo `luccadumas/english-dictionary` → **Root Directory:** `frontend`
+2. Set `NEXT_PUBLIC_API_URL` to the Railway API URL
+3. Deploy → update Railway `CORS_ORIGIN` with the Vercel URL
 
-Or run `.\scripts\railway-setup.ps1` after `railway login`.
+Or from `frontend/`: `vercel link --yes` → `vercel --prod`
+
+Or run `.\scripts\railway-setup.ps1` for API setup (Railway only).
 
 Checklist:
 
