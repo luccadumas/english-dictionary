@@ -127,16 +127,30 @@ jobs:
     environment: production
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Production deploy note
+        run: |
+          echo "Production deploy is handled by platform Git integrations:"
+          echo "  - Railway (API) — connected repo on push to main"
+          echo "  - Vercel (frontend) — connected repo on push to main"
+          echo ""
+          echo "CI validates code quality; deploy runs independently on each platform."
 
-      - name: Deploy to Railway
-        if: ${{ secrets.RAILWAY_TOKEN != '' }}
-        run: echo "Configure RAILWAY_TOKEN secret to enable automatic deploy"
+      - name: Optional Railway CLI deploy
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          if [ -z "$RAILWAY_TOKEN" ]; then
+            echo "RAILWAY_TOKEN not set — skipping CLI deploy (Git integration still applies)."
+            exit 0
+          fi
+          echo "RAILWAY_TOKEN is configured. Use railway CLI here if you want CI-triggered deploys."
 
-      - name: Deploy to Vercel
-        if: ${{ secrets.VERCEL_TOKEN != '' }}
-        run: echo "Configure VERCEL_TOKEN secret to enable automatic deploy"
+      - name: Optional Vercel CLI deploy
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "VERCEL_TOKEN not set — skipping CLI deploy (Git integration still applies)."
+            exit 0
+          fi
+          echo "VERCEL_TOKEN is configured. Use vercel CLI here if you want CI-triggered deploys."
