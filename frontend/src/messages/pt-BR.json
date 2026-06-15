@@ -118,6 +118,8 @@
     "phoneticLabel": "Fonética: {phonetic}",
     "definitionsFor": "Definições de {partOfSpeech}",
     "wordNotFound": "Não foi possível encontrar a palavra: \"{word}\"",
+    "noDefinitionAvailable": "Nenhuma definição disponível para \"{word}\"",
+    "noDefinitionDescription": "Esta palavra está na lista do dicionário, mas o provedor de definições não tem entrada para ela. Tente uma palavra mais comum.",
     "tryAnotherWord": "Tentar outra palavra",
     "addedToFavorites": "Palavra adicionada aos favoritos",
     "removedFromFavorites": "Palavra removida dos favoritos"

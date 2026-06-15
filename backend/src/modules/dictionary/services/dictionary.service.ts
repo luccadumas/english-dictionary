@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { RedisService } from '@/infra/cache/redis/redis.service';
 import { FreeDictionaryApiService } from './free-dictionary-api.service';
 import {
@@ -50,8 +50,26 @@ export class DictionaryService {
       return { data: cached, cached: true };
     }
 
-    const data = await this.freeDictionaryApiService.fetchWord(word);
-    await this.redisService.set(cacheKey, data, WORD_DETAIL_TTL);
-    return { data, cached: false };
+    try {
+      const data = await this.freeDictionaryApiService.fetchWord(word);
+      await this.redisService.set(cacheKey, data, WORD_DETAIL_TTL);
+      return { data, cached: false };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        const localWord = await this.wordsRepository.findByWord(word);
+        if (localWord) {
+          const stub = [
+            {
+              word: localWord.word,
+              phonetics: [],
+              meanings: [],
+            },
+          ];
+          await this.redisService.set(cacheKey, stub, WORD_DETAIL_TTL);
+          return { data: stub, cached: false };
+        }
+      }
+      throw error;
+    }
   }
 }

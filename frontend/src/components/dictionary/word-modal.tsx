@@ -1,5 +1,7 @@
 'use client';
 
+import { BookOpen } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import {
   useWordDetail,
   useToggleFavorite,
@@ -7,6 +9,7 @@ import {
 } from '@/lib/hooks/dictionary/use-dictionary';
 import { WordDetailSkeleton } from '@/components/shared/loading-skeleton';
 import { ErrorState } from '@/components/shared/error-state';
+import { EmptyState } from '@/components/shared/empty-state';
 import { WordDetail } from '@/components/dictionary/word-detail';
 import { WordModalHeader } from '@/components/dictionary/word-modal-header';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -18,6 +21,7 @@ interface WordDetailModalProps {
 }
 
 export function WordDetailModal({ word, open, onOpenChange }: WordDetailModalProps) {
+  const t = useTranslations('dictionary');
   const { data: entries, isLoading, isError, refetch } = useWordDetail(word, {
     enabled: open && !!word,
   });
@@ -27,6 +31,7 @@ export function WordDetailModal({ word, open, onOpenChange }: WordDetailModalPro
   const { add, remove } = useToggleFavorite(word);
 
   const entry = entries?.[0];
+  const hasDefinitions = (entry?.meanings?.length ?? 0) > 0;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -44,8 +49,20 @@ export function WordDetailModal({ word, open, onOpenChange }: WordDetailModalPro
 
         <div className="flex-1 overflow-y-auto px-6 pb-6" aria-busy={isLoading}>
           {isLoading && <WordDetailSkeleton />}
-          {isError && <ErrorState onRetry={refetch} />}
-          {entry && (
+          {isError && (
+            <ErrorState
+              message={t('wordNotFound', { word })}
+              onRetry={refetch}
+            />
+          )}
+          {entry && !hasDefinitions && (
+            <EmptyState
+              title={t('noDefinitionAvailable', { word })}
+              description={t('noDefinitionDescription')}
+              icon={<BookOpen className="h-10 w-10" aria-hidden="true" />}
+            />
+          )}
+          {entry && hasDefinitions && (
             <WordDetail entry={entry} showHeader={false} maxDefinitions={5} />
           )}
         </div>
