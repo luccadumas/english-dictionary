@@ -157,19 +157,24 @@ Detailed conventions in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 1. Publish to GitHub: [docs/GITHUB.md](docs/GITHUB.md)
 
-### Railway (API)
+### Railway
 
-1. New Project → Deploy from GitHub → use `railway.toml` (builds `backend/Dockerfile`)
-2. Add **PostgreSQL** and **Redis** plugins
-3. Set env vars: `DATABASE_URL`, `REDIS_URL`, `JWT_SECRET`, `NODE_ENV=production`, `CORS_ORIGIN=<vercel-url>`
+**API (`dictionary-api`)**
+
+1. Connect repo → uses `/railway.toml` and root `Dockerfile`
+2. Add **PostgreSQL** and **Redis**
+3. Variables: `DATABASE_URL=${{Postgres.DATABASE_URL}}`, `REDIS_URL=${{Redis.REDIS_URL}}`, `JWT_SECRET`, `NODE_ENV=production`, `PORT=3333`, `CORS_ORIGIN=<web-url>`
 4. Generate public domain → note API URL
 5. One-time: `railway run npm run import:words`
 
-### Vercel (frontend)
+**Web (`dictionary-web`)**
 
-1. Import repo → **Root Directory:** `frontend`
-2. Set `NEXT_PUBLIC_API_URL` to the Railway API URL
-3. Deploy → update Railway `CORS_ORIGIN` with the Vercel URL
+1. Connect same repo
+2. **Settings → Source:** Root Directory `frontend` (or Config File `/railway.web.toml` at repo root)
+3. Variables: `NEXT_PUBLIC_API_URL=<api-url>`, `NODE_ENV=production`, `PORT=3000`
+4. Generate public domain → update API `CORS_ORIGIN` with this URL
+
+Or run `.\scripts\railway-setup.ps1` after `railway login`.
 
 Checklist:
 

@@ -3,6 +3,8 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 dockerfileTarget = "runner"
 
+watchPatterns = ["backend/**", "Dockerfile", "railway.toml", ".dockerignore"]
+
 [deploy]
 startCommand = "sh docker-entrypoint.sh"
 healthcheckPath = "/"

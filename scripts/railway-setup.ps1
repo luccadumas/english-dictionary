@@ -1,8 +1,3 @@
-# Railway deploy helper for English Dictionary monorepo
-# Usage:
-#   1. railway login
-#   2. .\scripts\railway-setup.ps1
-
 $ErrorActionPreference = "Stop"
 
 function Require-Command($name) {
@@ -55,20 +50,22 @@ railway up --detach
 
 Write-Host ""
 Write-Host "=== dictionary-web ===" -ForegroundColor Green
-Write-Host "Switch service to dictionary-web:" -ForegroundColor Yellow
-Write-Host "  railway service"
-Read-Host "Press Enter after selecting dictionary-web"
+railway service link dictionary-web
 
-$apiUrl = Read-Host "Paste the API public URL (e.g. https://dictionary-api-production.up.railway.app)"
-if ($apiUrl) {
-  railway variables set "NEXT_PUBLIC_API_URL=$apiUrl" "NODE_ENV=production" "PORT=3000"
-}
+$apiUrl = "https://dictionary-api-production-d35d.up.railway.app"
+Write-Host "Setting web variables (API: $apiUrl)..." -ForegroundColor Cyan
+railway variables set "NEXT_PUBLIC_API_URL=$apiUrl" "NODE_ENV=production" "PORT=3000"
 
-Write-Host "Deploying frontend (run from frontend folder)..." -ForegroundColor Cyan
-Push-Location frontend
-railway up --detach
-Pop-Location
+Write-Host "Generating public domain for web..." -ForegroundColor Cyan
+railway domain 2>$null
+
+Write-Host "Deploying frontend (frontend/ as archive root)..." -ForegroundColor Cyan
+railway up ./frontend --path-as-root --detach -y
 
 Write-Host ""
-Write-Host "Done. Update API CORS_ORIGIN with the frontend URL, then redeploy API." -ForegroundColor Green
+Write-Host "In Railway UI for dictionary-web (GitHub autodeploy):" -ForegroundColor Yellow
+Write-Host "  Settings -> Config file: /railway.web.toml"
+Write-Host "  Or Root Directory: frontend + Config file: /frontend/railway.toml"
+Write-Host ""
+Write-Host "Update API CORS_ORIGIN with the web URL, then redeploy API." -ForegroundColor Green
 Write-Host "Import words: railway service (api) && railway run npm run import:words" -ForegroundColor Green
