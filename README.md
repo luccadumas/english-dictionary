@@ -1,43 +1,43 @@
 # English Dictionary
 
-Aplicação full-stack para consulta de palavras em inglês: autenticação JWT, histórico de buscas, favoritos assíncronos (BullMQ), cache Redis e paginação por cursor.
+Full-stack application for looking up English words: JWT authentication, search history, async favorites (BullMQ), Redis caching, and cursor pagination.
 
-## Tecnologias
+## Technologies
 
-| Camada | Tecnologias |
-|--------|-------------|
-| **Linguagem** | TypeScript |
+| Layer | Stack |
+|-------|-------|
+| **Language** | TypeScript |
 | **Backend** | NestJS 10 · Prisma · PostgreSQL · Redis · BullMQ · JWT · Swagger · Jest |
 | **Frontend** | Next.js 15 (App Router) · TanStack Query · Shadcn UI · Tailwind CSS · Zod · React Hook Form · next-intl |
 | **DevOps** | Docker · Docker Compose · GitHub Actions · Railway (API) · Vercel (frontend) |
 | **Runtime** | Node.js 22+ |
 
-## Pré-requisitos
+## Prerequisites
 
 - [Node.js](https://nodejs.org/) **22+**
-- [Docker](https://www.docker.com/) e Docker Compose
-- **npm** (v7+) ou **Yarn**
+- [Docker](https://www.docker.com/) and Docker Compose
+- **npm** (v7+) or **Yarn**
 
-## Instalação
+## Installation
 
-### 1. Clonar o repositório
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/luccadumas/english-dictionary.git
 cd english-dictionary
 ```
 
-### 2. Variáveis de ambiente
+### 2. Environment variables
 
-Os arquivos `.env` **não são versionados** (veja [.gitignore](#gitignore)). Copie os exemplos:
+`.env` files are **not versioned** (see [.gitignore](#gitignore)). Copy the examples:
 
 ```bash
-cp .env.example .env                    # opcional - referência na raiz
+cp .env.example .env                    # optional — root reference
 cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env.local
 ```
 
-**Backend** (`backend/.env`) - desenvolvimento local com infra Docker:
+**Backend** (`backend/.env`) — local development with Docker infra:
 
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/dictionary"
@@ -50,7 +50,7 @@ NODE_ENV=development
 CORS_ORIGIN=http://localhost:3000
 ```
 
-Se as portas `5432`/`6379` estiverem ocupadas no Docker Compose, use as portas alternativas (veja [Docker](#docker)):
+If ports `5432`/`6379` are already in use, use alternate Docker Compose ports (see [Docker](#docker)):
 
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:15432/dictionary"
@@ -63,51 +63,51 @@ REDIS_PORT=16379
 NEXT_PUBLIC_API_URL=http://localhost:3333
 ```
 
-### 3. Escolha um modo de execução
+### 3. Choose a run mode
 
-#### Opção A - Docker (stack completa)
+#### Option A — Docker (full stack)
 
-Sobe Postgres, Redis, API e frontend de uma vez:
+Starts Postgres, Redis, API, and frontend at once:
 
 ```bash
-# Simulação de produção (recomendado para testar tudo)
+# Production simulation (recommended to test everything)
 npm run docker:prod
 
-# Desenvolvimento com hot-reload
+# Development with hot-reload
 npm run docker:dev
 
-# Parar todos os serviços
+# Stop all services
 npm run docker:down
 ```
 
-Se as portas padrão estiverem em uso:
+If default ports are in use:
 
 ```bash
 POSTGRES_PORT=15432 REDIS_PORT=16379 npm run docker:prod
 ```
 
-#### Opção B - Desenvolvimento híbrido (infra no Docker, apps no host)
+#### Option B — Hybrid development (infra in Docker, apps on host)
 
 ```bash
-# 1. Sobe apenas Postgres e Redis
+# 1. Start Postgres and Redis only
 npm run dev:infra
 
-# 2. Instala dependências
+# 2. Install dependencies
 npm install --prefix backend
 npm install --prefix frontend
 
-# 3. Migra o banco e importa palavras (opcional, ~370k)
+# 3. Run migrations and import words (optional, ~370k)
 cd backend
 npx prisma migrate dev
 npm run import:words
 cd ..
 
-# 4. Inicia API e frontend (terminais separados)
+# 4. Start API and frontend (separate terminals)
 npm run dev:backend
 npm run dev:frontend
 ```
 
-Com Yarn:
+With Yarn:
 
 ```bash
 yarn dev:infra
@@ -117,91 +117,105 @@ yarn dev:backend   # terminal 1
 yarn dev:frontend  # terminal 2
 ```
 
-## Como usar
+## Usage
 
-### URLs locais
+### Local URLs
 
-| Serviço | URL |
+| Service | URL |
 |---------|-----|
 | Frontend | http://localhost:3000 |
 | API | http://localhost:3333 |
 | Swagger | http://localhost:3333/docs |
 
-### Fluxo básico
+### Basic flow
 
-1. Acesse http://localhost:3000
-2. Crie uma conta ou faça login (JWT obrigatório para consultar palavras)
-3. Vá em **Dictionary** para listar e filtrar palavras
-4. Clique em uma palavra para abrir o modal com definição, fonética e exemplos
-5. Use **Favorites** e **History** para gerenciar palavras salvas e buscas recentes
+1. Open http://localhost:3000
+2. Sign up or log in (JWT required to query words)
+3. Go to **Dictionary** to list and filter words
+4. Click a word to open the modal with definition, phonetics, and examples
+5. Use **Favorites** and **History** to manage saved words and recent searches
 
-### Importar palavras no banco local
+### Import words into the local database
 
-A lista de palavras vem do repositório [dwyl/english-words](https://github.com/dwyl/english-words/blob/master/words_dictionary.json) (~370.000 entradas). As **definições** vêm da [Free Dictionary API](https://dictionaryapi.dev/) - palavras raras podem aparecer na lista sem definição disponível.
+The word list comes from [dwyl/english-words](https://github.com/dwyl/english-words/blob/master/words_dictionary.json) (~370,000 entries). **Definitions** come from the [Free Dictionary API](https://dictionaryapi.dev/) — rare words may appear in the list without an available definition.
 
 ```bash
-# Banco local (ajuste a porta se usar Docker com POSTGRES_PORT=15432)
+# Local database (adjust port if using Docker with POSTGRES_PORT=15432)
 DATABASE_URL="postgresql://postgres:postgres@localhost:15432/dictionary" npm run import:words
 ```
 
-Import remoto (Railway/produção):
+Remote import (Railway/production):
 
 ```bash
 ./scripts/import-words.sh
-# ou: npm run import:words:remote
+# or: npm run import:words:remote
 ```
 
-> Após importar, se a lista aparecer vazia, limpe o cache Redis:  
+> After importing, if the list appears empty, clear the Redis cache:  
 > `docker exec dictionary_redis redis-cli FLUSHDB`
 
-## Scripts disponíveis
+## Docker
 
-| Script | Descrição |
-|--------|-----------|
-| `dev:infra` | Sobe Postgres e Redis via Docker |
-| `docker:dev` | Stack completa em modo dev (hot-reload) |
-| `docker:prod` | Stack completa com imagens de produção |
-| `docker:down` | Para todos os serviços Docker |
-| `dev:backend` | API NestJS em watch mode |
+| Command | Description |
+|---------|-------------|
+| `npm run dev:infra` | Postgres + Redis only |
+| `npm run docker:dev` | Full dev stack (hot-reload) |
+| `npm run docker:prod` | Full stack with production images |
+| `npm run docker:down` | Stop all Docker Compose services |
+
+Production images:
+
+- **API:** `backend/Dockerfile` (also used by Railway via root `Dockerfile`)
+- **Frontend:** `frontend/Dockerfile` (local simulation only — production uses Vercel)
+
+## Available scripts
+
+| Script | Description |
+|--------|-------------|
+| `dev:infra` | Start Postgres and Redis via Docker |
+| `docker:dev` | Full stack in dev mode (hot-reload) |
+| `docker:prod` | Full stack with production images |
+| `docker:down` | Stop all Docker services |
+| `dev:backend` | NestJS API in watch mode |
 | `dev:frontend` | Next.js dev server |
 | `build` | Build backend + frontend |
-| `test` / `test:e2e` / `test:all` | Testes unitários e E2E |
+| `test` / `test:e2e` / `test:all` | Unit and E2E tests |
 | `lint` | Lint backend + frontend |
-| `import:words` | Importa palavras no banco local |
-| `import:words:remote` | Importa palavras no Railway |
+| `import:words` | Import words into the local database |
+| `import:words:remote` | Import words into Railway |
 
 ## .gitignore
 
-O projeto possui `.gitignore` na raiz, em `backend/` e em `frontend/`. Os principais arquivos **ignorados** (não commitados):
+The project includes `.gitignore` at the root, in `backend/`, and in `frontend/`. Main **ignored** patterns (not committed):
 
-| Padrão | Motivo |
-|--------|--------|
-| `node_modules/` | Dependências instaladas localmente |
-| `dist/`, `.next/`, `out/`, `build/` | Artefatos de build |
-| `.env`, `.env.local`, `.env.*.local`, `.env.production` | Segredos e configuração local |
-| `.vercel`, `.railway` | Credenciais de deploy |
-| `coverage/` | Relatórios de testes |
-| `.DS_Store`, `.idea/`, `.vscode/` | Arquivos de SO e IDE |
+| Pattern | Reason |
+|---------|--------|
+| `node_modules/` | Locally installed dependencies |
+| `dist/`, `.next/`, `out/`, `build/` | Build artifacts |
+| `.env`, `.env.local`, `.env.*.local`, `.env.production` | Secrets and local configuration |
+| `.vercel`, `.railway` | Deploy credentials |
+| `coverage/` | Test reports |
+| `.DS_Store`, `.idea/`, `.vscode/` | OS and IDE files |
 
-**Importante:** sempre crie seus `.env` a partir dos arquivos `.env.example` antes de rodar o projeto.
+**Important:** always create your `.env` files from `.env.example` before running the project.
 
-## Deploy (produção)
+## Deploy (production)
 
-| Ambiente | URL |
-|----------|-----|
+| Environment | URL |
+|-------------|-----|
 | Frontend (Vercel) | https://english-dictionary-web.vercel.app |
 | API (Railway) | https://dictionary-api-production-d35d.up.railway.app |
 | Swagger | https://dictionary-api-production-d35d.up.railway.app/docs |
 
-Detalhes em [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/GITHUB.md](docs/GITHUB.md), [backend/README.md](backend/README.md) e [frontend/README.md](frontend/README.md).
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/GITHUB.md](docs/GITHUB.md), [backend/README.md](backend/README.md), and [frontend/README.md](frontend/README.md) for details.
 
-## Estrutura do projeto
+## Project structure
 
 ```
 english-dictionary/
 ├── .gitignore
 ├── docker-compose.yml
-├── Dockerfile                 # API - Railway
+├── Dockerfile                 # API — Railway
 ├── railway.toml
 ├── package.json
 ├── backend/
@@ -213,17 +227,17 @@ english-dictionary/
 │   ├── .env.example
 │   └── vercel.json
 ├── scripts/
-│   ├── import-words.sh        # Import remoto (Railway)
+│   ├── import-words.sh        # Remote import (Railway)
 │   └── run-workspace.mjs
 └── docs/
 ```
 
-## Testes
+## Tests
 
 ```bash
 npm run test:all
 ```
 
-## Licença
+## License
 
 MIT
