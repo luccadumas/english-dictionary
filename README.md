@@ -32,12 +32,12 @@ cd english-dictionary
 Os arquivos `.env` **não são versionados** (veja [.gitignore](#gitignore)). Copie os exemplos:
 
 ```bash
-cp .env.example .env                    # opcional — referência na raiz
+cp .env.example .env                    # opcional - referência na raiz
 cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env.local
 ```
 
-**Backend** (`backend/.env`) — desenvolvimento local com infra Docker:
+**Backend** (`backend/.env`) - desenvolvimento local com infra Docker:
 
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/dictionary"
@@ -65,7 +65,7 @@ NEXT_PUBLIC_API_URL=http://localhost:3333
 
 ### 3. Escolha um modo de execução
 
-#### Opção A — Docker (stack completa)
+#### Opção A - Docker (stack completa)
 
 Sobe Postgres, Redis, API e frontend de uma vez:
 
@@ -86,7 +86,7 @@ Se as portas padrão estiverem em uso:
 POSTGRES_PORT=15432 REDIS_PORT=16379 npm run docker:prod
 ```
 
-#### Opção B — Desenvolvimento híbrido (infra no Docker, apps no host)
+#### Opção B - Desenvolvimento híbrido (infra no Docker, apps no host)
 
 ```bash
 # 1. Sobe apenas Postgres e Redis
@@ -137,7 +137,7 @@ yarn dev:frontend  # terminal 2
 
 ### Importar palavras no banco local
 
-A lista de palavras vem do repositório [dwyl/english-words](https://github.com/dwyl/english-words/blob/master/words_dictionary.json) (~370.000 entradas). As **definições** vêm da [Free Dictionary API](https://dictionaryapi.dev/) — palavras raras podem aparecer na lista sem definição disponível.
+A lista de palavras vem do repositório [dwyl/english-words](https://github.com/dwyl/english-words/blob/master/words_dictionary.json) (~370.000 entradas). As **definições** vêm da [Free Dictionary API](https://dictionaryapi.dev/) - palavras raras podem aparecer na lista sem definição disponível.
 
 ```bash
 # Banco local (ajuste a porta se usar Docker com POSTGRES_PORT=15432)
@@ -201,7 +201,7 @@ Detalhes em [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/GITHUB.md](docs/
 english-dictionary/
 ├── .gitignore
 ├── docker-compose.yml
-├── Dockerfile                 # API — Railway
+├── Dockerfile                 # API - Railway
 ├── railway.toml
 ├── package.json
 ├── backend/

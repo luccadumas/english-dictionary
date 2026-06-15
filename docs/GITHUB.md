@@ -1,4 +1,4 @@
-# GitHub — publish the monorepo
+# GitHub - publish the monorepo
 
 Step-by-step to version the project and push it to GitHub.
 

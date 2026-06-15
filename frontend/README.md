@@ -1,6 +1,6 @@
 # Dictionary Web
 
-Frontend for **English Dictionary** — word search, paginated dictionary, favorites, history, and authentication, with i18n support (pt-BR, en, es).
+Frontend for **English Dictionary** - word search, paginated dictionary, favorites, history, and authentication, with i18n support (pt-BR, en, es).
 
 **Production:** https://english-dictionary-web.vercel.app
 
@@ -30,7 +30,7 @@ npm install --legacy-peer-deps
 
 ### Yarn
 
-From the monorepo root (recommended — workspaces):
+From the monorepo root (recommended - workspaces):
 
 ```bash
 yarn install
@@ -88,7 +88,7 @@ Local app: http://localhost:3000
 
 | Route | Description |
 |-------|-------------|
-| `/` | Home — quick search and recent history |
+| `/` | Home - quick search and recent history |
 | `/dictionary` | Full dictionary with filter and infinite scroll |
 | `/words/[word]` | Word detail page |
 | `/favorites` | Saved favorites |
@@ -99,11 +99,11 @@ Local app: http://localhost:3000
 
 - **Debounced search** (1s) with loading state in the search field
 - **Cursor pagination** with infinite scroll
-- **Async favorites** — immediate UI feedback
-- **Optimistic navigation** — skeleton while switching menu pages
+- **Async favorites** - immediate UI feedback
+- **Optimistic navigation** - skeleton while switching menu pages
 - **Data prefetch** on nav link hover/click
 - **Light/dark theme** (cookie `app-theme`)
-- **i18n** — locales `en`, `pt-BR`, `es` (cookie `app_locale`)
+- **i18n** - locales `en`, `pt-BR`, `es` (cookie `app_locale`)
 
 ## Deploy (Vercel)
 
@@ -129,7 +129,7 @@ Settings in `vercel.json`:
 
 - Node 22 (via `engines` in `package.json`)
 - Region: `gru1` (São Paulo)
-- Install: `npm install --legacy-peer-deps` (Vercel; local dev also supports Yarn — see [Setup](#setup))
+- Install: `npm install --legacy-peer-deps` (Vercel; local dev also supports Yarn - see [Setup](#setup))
 
 After deploy, set Railway `CORS_ORIGIN` to your Vercel URL.
 

@@ -11,7 +11,7 @@ dictionary/
 ├── docs/
 │   ├── ARCHITECTURE.md
 │   └── GITHUB.md
-├── Dockerfile               # API image (Railway — monorepo root context)
+├── Dockerfile               # API image (Railway - monorepo root context)
 ├── railway.toml             # Railway config for dictionary-api
 ├── docker-compose.yml       # Local dev + prod simulation
 ├── .github/workflows/       # CI/CD
@@ -45,9 +45,9 @@ Each package (`backend`, `frontend`) has its own `package.json`, dependencies, a
 | Component | Platform | Node | Image / build |
 |-----------|----------|------|---------------|
 | API | Railway | 22 | Root `Dockerfile` + `railway.toml` |
-| Frontend | Vercel | 22 | `frontend/vercel.json` — no Docker in prod |
-| Postgres | Railway plugin | — | Managed |
-| Redis | Railway plugin | — | Managed |
+| Frontend | Vercel | 22 | `frontend/vercel.json` - no Docker in prod |
+| Postgres | Railway plugin | - | Managed |
+| Redis | Railway plugin | - | Managed |
 
 **CORS:** API `CORS_ORIGIN` must include the Vercel frontend URL.
 
@@ -104,7 +104,7 @@ modules/<domain>/
 | Monorepo root | `/Dockerfile` | Railway production deploy |
 | `backend/` | `backend/Dockerfile` | `docker-compose`, local builds |
 
-Entrypoint: `docker-entrypoint.sh` — runs `prisma migrate deploy`, then `node dist/main.js`.
+Entrypoint: `docker-entrypoint.sh` - runs `prisma migrate deploy`, then `node dist/main.js`.
 
 ### Tests
 
@@ -141,7 +141,7 @@ src/
 ### Deploy
 
 - **Production:** Vercel (`frontend/vercel.json`, region `gru1`)
-- **Local Docker:** `frontend/Dockerfile` with `output: 'standalone'` — simulation only
+- **Local Docker:** `frontend/Dockerfile` with `output: 'standalone'` - simulation only
 
 ### Tests
 

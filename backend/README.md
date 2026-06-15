@@ -1,6 +1,6 @@
 # Dictionary API
 
-REST API for **English Dictionary** — word lookup, JWT authentication, search history, async favorites, Redis caching, and cursor pagination.
+REST API for **English Dictionary** - word lookup, JWT authentication, search history, async favorites, Redis caching, and cursor pagination.
 
 **Production:** https://dictionary-api-production-d35d.up.railway.app  
 **Swagger:** https://dictionary-api-production-d35d.up.railway.app/docs
@@ -15,7 +15,7 @@ REST API for **English Dictionary** — word lookup, JWT authentication, search 
 ## Prerequisites
 
 - Node.js **22+**
-- Docker (Postgres + Redis) — start from monorepo root: `npm run dev:infra`
+- Docker (Postgres + Redis) - start from monorepo root: `npm run dev:infra`
 - **npm** or **Yarn**
 
 ## Setup
@@ -28,7 +28,7 @@ cd backend
 cp .env.example .env
 npm install
 npx prisma migrate dev
-npm run import:words   # optional — ~370k words
+npm run import:words   # optional - ~370k words
 ```
 
 ### Environment variables
@@ -44,7 +44,7 @@ npm run import:words   # optional — ~370k words
 | `JWT_EXPIRES_IN` | Token expiration | `7d` |
 | `PORT` | API port | `3333` |
 | `NODE_ENV` | Environment | `development` |
-| `CORS_ORIGIN` | Allowed origin(s) — comma-separated | `http://localhost:3000` |
+| `CORS_ORIGIN` | Allowed origin(s) - comma-separated | `http://localhost:3000` |
 
 ## Run
 
@@ -79,7 +79,7 @@ From monorepo root: `npm run dev:backend`
 | `POST` | `/auth/signin` | Sign in (JWT) |
 | `GET` | `/entries/en` | List words (cursor pagination) |
 | `GET` | `/entries/en/:word` | Word details |
-| `POST` | `/entries/en/:word/favorite` | Add favorite (202 — async via BullMQ) |
+| `POST` | `/entries/en/:word/favorite` | Add favorite (202 - async via BullMQ) |
 | `DELETE` | `/entries/en/:word/unfavorite` | Remove favorite |
 | `GET` | `/entries/en/:word/is-favorite` | Check favorite status |
 | `GET` | `/user/me/history` | User search history |
