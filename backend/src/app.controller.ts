@@ -15,4 +15,19 @@ export class AppController {
   getRoot() {
     return { message: 'English Dictionary' };
   }
+
+  @Get('health')
+  @ApiOperation({ summary: 'Health check' })
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', example: 'ok' },
+        timestamp: { type: 'string', format: 'date-time' },
+      },
+    },
+  })
+  health() {
+    return { status: 'ok', timestamp: new Date().toISOString() };
+  }
 }

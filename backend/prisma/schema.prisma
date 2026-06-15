@@ -51,6 +51,7 @@ model History {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   word      Word     @relation(fields: [wordId], references: [id])
 
+  @@unique([userId, wordId])
   @@index([userId, createdAt(sort: Desc)])
   @@map("history")
 }

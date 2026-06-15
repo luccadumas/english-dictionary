@@ -16,23 +16,3 @@ export function formatDate(dateString: string, locale = 'en'): string {
   });
 }
 
-export const AUTH_TOKEN_COOKIE = 'app_token';
-
-export function getTokenFromCookie(): string | null {
-  if (typeof document === 'undefined') return null;
-  const match = document.cookie.match(new RegExp(`${AUTH_TOKEN_COOKIE}=([^;]+)`));
-  return match ? match[1] : null;
-}
-
-export function setTokenCookie(token: string): void {
-  const clean = token.replace('Bearer ', '');
-  const secure =
-    typeof window !== 'undefined' && window.location.protocol === 'https:'
-      ? '; Secure'
-      : '';
-  document.cookie = `${AUTH_TOKEN_COOKIE}=${clean}; path=/; max-age=${7 * 24 * 3600}; SameSite=Strict${secure}`;
-}
-
-export function clearTokenCookie(): void {
-  document.cookie = `${AUTH_TOKEN_COOKIE}=; path=/; max-age=0`;
-}

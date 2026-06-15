@@ -1,19 +1,14 @@
-import { getTokenFromCookie } from '@/lib/utils';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3333';
+const API_PROXY_PREFIX = '/api/backend';
 
 export function resolveAudioUrl(audioPath: string): string {
   if (audioPath.startsWith('http')) return audioPath;
-  return `${API_URL}${audioPath}`;
+  if (audioPath.startsWith(API_PROXY_PREFIX)) return audioPath;
+  return `${API_PROXY_PREFIX}${audioPath}`;
 }
 
 export async function playWordAudio(audioPath: string): Promise<void> {
   const url = resolveAudioUrl(audioPath);
-  const token = getTokenFromCookie();
-
-  const response = await fetch(url, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  });
+  const response = await fetch(url, { credentials: 'include' });
 
   if (!response.ok) return;
 

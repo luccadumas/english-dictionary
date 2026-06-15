@@ -98,7 +98,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:3333/']
+      test: ['CMD', 'curl', '-f', 'http://localhost:3333/health']
       interval: 30s
       timeout: 5s
       retries: 3
@@ -115,7 +115,7 @@ services:
     restart: unless-stopped
     command: npm run dev
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:3333
+      NEXT_PUBLIC_API_URL: http://api-dev:3333
       NODE_ENV: development
     ports:
       - '3000:3000'
@@ -133,13 +133,14 @@ services:
       dockerfile: Dockerfile
       target: runner
       args:
-        NEXT_PUBLIC_API_URL: http://localhost:3333
+        NEXT_PUBLIC_API_URL: http://api-prod:3333
     container_name: dictionary_web_prod
     profiles: [prod]
     restart: unless-stopped
     environment:
       NODE_ENV: production
       HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_API_URL: http://api-prod:3333
     ports:
       - '3000:3000'
     depends_on:

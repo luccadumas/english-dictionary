@@ -4,8 +4,10 @@ import { createContext, useCallback, useContext, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { authApi } from '@/lib/api/auth';
-import { useHasToken } from '@/lib/hooks/auth/use-has-token';
-import { clearTokenCookie, setTokenCookie } from '@/lib/utils';
+import {
+  SESSION_KEY,
+  useHasToken,
+} from '@/lib/hooks/auth/use-has-token';
 import type { User } from '@/types/auth.types';
 
 export const AUTH_KEYS = {
@@ -22,7 +24,7 @@ type AuthContextValue = {
   isRedirecting: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (name: string, email: string, password: string) => Promise<void>;
-  signOut: () => void;
+  signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -43,21 +45,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     gcTime: 1000 * 60 * 30,
   });
 
-  const handleAuthSuccess = useCallback(
-    async (token: string) => {
-      setTokenCookie(token);
-      await queryClient.invalidateQueries({ queryKey: AUTH_KEYS.me });
-      router.push('/');
-      router.refresh();
-    },
-    [queryClient, router],
-  );
+  const handleAuthSuccess = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: SESSION_KEY });
+    await queryClient.invalidateQueries({ queryKey: AUTH_KEYS.me });
+    router.push('/');
+    router.refresh();
+  }, [queryClient, router]);
 
   const signInMutation = useMutation({
     mutationKey: AUTH_KEYS.signIn,
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       authApi.signIn({ email, password }),
-    onSuccess: (response) => handleAuthSuccess(response.token),
+    onSuccess: () => handleAuthSuccess(),
   });
 
   const signUpMutation = useMutation({
@@ -71,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email: string;
       password: string;
     }) => authApi.signUp({ name, email, password }),
-    onSuccess: (response) => handleAuthSuccess(response.token),
+    onSuccess: () => handleAuthSuccess(),
   });
 
   const signIn = useCallback(
@@ -88,8 +87,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [signUpMutation],
   );
 
-  const signOut = useCallback(() => {
-    clearTokenCookie();
+  const signOut = useCallback(async () => {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
     queryClient.clear();
     signInMutation.reset();
     signUpMutation.reset();

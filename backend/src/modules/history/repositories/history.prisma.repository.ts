@@ -16,7 +16,11 @@ export class HistoryPrismaRepository implements IHistoryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async addEntry(userId: string, wordId: number): Promise<void> {
-    await this.prisma.history.create({ data: { userId, wordId } });
+    await this.prisma.history.upsert({
+      where: { userId_wordId: { userId, wordId } },
+      update: { createdAt: new Date() },
+      create: { userId, wordId },
+    });
   }
 
   async listHistory(params: {

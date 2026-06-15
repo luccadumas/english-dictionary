@@ -4,6 +4,7 @@ import {
   createAuthenticatedUser,
   createTestApp,
 } from '../helpers/create-test-app';
+import { waitForFavoriteStatus } from '../helpers/wait-for-favorite';
 
 describe('Favorites (e2e)', () => {
   let app: INestApplication;
@@ -28,7 +29,7 @@ describe('Favorites (e2e)', () => {
   });
 
   it('GET /user/me/favorites lists favorites', async () => {
-    await new Promise((r) => setTimeout(r, 500));
+    await waitForFavoriteStatus(app, token, 'fire', true);
 
     const res = await request(app.getHttpServer())
       .get('/user/me/favorites')
@@ -45,7 +46,7 @@ describe('Favorites (e2e)', () => {
       .set('Authorization', `Bearer ${token}`)
       .expect(202);
 
-    await new Promise((r) => setTimeout(r, 500));
+    await waitForFavoriteStatus(app, token, 'water', true);
 
     return request(app.getHttpServer())
       .delete('/entries/en/water/unfavorite')

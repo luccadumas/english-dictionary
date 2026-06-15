@@ -9,6 +9,7 @@ import {
 import { dictionaryApi } from '@/lib/api/dictionary';
 import { HISTORY_KEYS } from '@/lib/hooks/history/use-history';
 import { getCursorNextPageParam } from '@/lib/query/cursor-pagination';
+import { pollFavoriteStatus } from '@/lib/query/poll-favorite-status';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 export const DICTIONARY_KEYS = {
@@ -68,11 +69,6 @@ export function useToggleFavorite(word?: string) {
       await queryClient.invalidateQueries({
         queryKey: DICTIONARY_KEYS.isFavorite(word),
       });
-      window.setTimeout(() => {
-        void queryClient.refetchQueries({
-          queryKey: DICTIONARY_KEYS.isFavorite(word),
-        });
-      }, 800);
     }
   };
 
@@ -82,6 +78,7 @@ export function useToggleFavorite(word?: string) {
       toast.success(t('addedToFavorites'));
       if (word) {
         queryClient.setQueryData(DICTIONARY_KEYS.isFavorite(word), true);
+        await pollFavoriteStatus(queryClient, word, true);
       }
       await invalidate();
     },
@@ -94,6 +91,7 @@ export function useToggleFavorite(word?: string) {
       toast.success(t('removedFromFavorites'));
       if (word) {
         queryClient.setQueryData(DICTIONARY_KEYS.isFavorite(word), false);
+        await pollFavoriteStatus(queryClient, word, false);
       }
       await invalidate();
     },

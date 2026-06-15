@@ -23,7 +23,7 @@ export class CacheResponseInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(() => {
         const elapsed = Date.now() - start;
-        response.setHeader('x-response-time', `${elapsed}ms`);
+        response.setHeader('x-response-time', String(elapsed));
         if (isCacheable && !response.getHeader('x-cache')) {
           response.setHeader('x-cache', 'MISS');
         }

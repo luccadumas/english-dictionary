@@ -24,8 +24,6 @@ describe('History (e2e)', () => {
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
 
-    await new Promise((r) => setTimeout(r, 300));
-
     const res = await request(app.getHttpServer())
       .get('/user/me/history')
       .set('Authorization', `Bearer ${token}`)
@@ -36,5 +34,27 @@ describe('History (e2e)', () => {
     expect(res.body.results[0]).toHaveProperty('added');
     expect(res.body).toHaveProperty('hasNext');
     expect(res.body).toHaveProperty('hasPrev');
+  });
+
+  it('does not duplicate history when viewing the same word twice', async () => {
+    await request(app.getHttpServer())
+      .get('/entries/en/world')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+
+    await request(app.getHttpServer())
+      .get('/entries/en/world')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+
+    const res = await request(app.getHttpServer())
+      .get('/user/me/history')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+
+    const worldEntries = res.body.results.filter(
+      (entry: { word: string }) => entry.word === 'world',
+    );
+    expect(worldEntries).toHaveLength(1);
   });
 });

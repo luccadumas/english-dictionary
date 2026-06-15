@@ -1,24 +1,21 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
-import { getTokenFromCookie } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
 
-function subscribeToToken() {
-  return () => {};
-}
+export const SESSION_KEY = ['auth', 'session'] as const;
 
-function getTokenSnapshot() {
-  return !!getTokenFromCookie();
-}
-
-function getServerTokenSnapshot() {
-  return false;
+async function fetchSession(): Promise<{ authenticated: boolean }> {
+  const res = await fetch('/api/auth/session', { credentials: 'include' });
+  if (!res.ok) return { authenticated: false };
+  return res.json() as Promise<{ authenticated: boolean }>;
 }
 
 export function useHasToken(): boolean {
-  return useSyncExternalStore(
-    subscribeToToken,
-    getTokenSnapshot,
-    getServerTokenSnapshot,
-  );
+  const { data } = useQuery({
+    queryKey: SESSION_KEY,
+    queryFn: fetchSession,
+    staleTime: 60_000,
+  });
+
+  return data?.authenticated ?? false;
 }

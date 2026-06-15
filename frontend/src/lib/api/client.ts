@@ -1,32 +1,28 @@
 import axios from 'axios';
-import { clearTokenCookie, getTokenFromCookie } from '@/lib/utils';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3333';
+const API_BASE_URL =
+  typeof window !== 'undefined'
+    ? '/api/backend'
+    : (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3333');
 
 export const apiClient = axios.create({
-  baseURL: API_URL,
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
     'Cache-Control': 'no-cache',
     Pragma: 'no-cache',
   },
-  validateStatus: (status) => status >= 200 && status < 300 || status === 202,
-});
-
-apiClient.interceptors.request.use((config) => {
-  const token = getTokenFromCookie();
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
+  withCredentials: true,
+  validateStatus: (status) =>
+    (status >= 200 && status < 300) || status === 202,
 });
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 401 && typeof window !== 'undefined') {
-        clearTokenCookie();
+        await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
         window.location.href = '/login';
       }
       const message =

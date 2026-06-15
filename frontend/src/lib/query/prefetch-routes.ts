@@ -6,19 +6,21 @@ import { DICTIONARY_KEYS } from '@/lib/hooks/dictionary/use-dictionary';
 import { FAVORITES_KEYS } from '@/lib/hooks/favorites/use-favorites';
 import { HISTORY_KEYS } from '@/lib/hooks/history/use-history';
 import { getCursorNextPageParam } from '@/lib/query/cursor-pagination';
-import { getTokenFromCookie } from '@/lib/utils';
 
 const LIST_LIMIT = 20;
 
 export type AppRoute = '/' | '/dictionary' | '/history' | '/favorites';
 
-function canPrefetchAuthRoute(href: AppRoute) {
-  if (href === '/dictionary') return true;
-  return typeof window !== 'undefined' && !!getTokenFromCookie();
+async function hasActiveSession(): Promise<boolean> {
+  if (typeof window === 'undefined') return false;
+  const res = await fetch('/api/auth/session', { credentials: 'include' });
+  if (!res.ok) return false;
+  const data = (await res.json()) as { authenticated?: boolean };
+  return data.authenticated === true;
 }
 
 export async function prefetchRoute(queryClient: QueryClient, href: AppRoute) {
-  if (!canPrefetchAuthRoute(href)) return;
+  if (href !== '/dictionary' && !(await hasActiveSession())) return;
 
   switch (href) {
     case '/':
