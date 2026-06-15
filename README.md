@@ -95,6 +95,8 @@ Docker is used for **local development and testing**, not for production fronten
 | `npm run dev:infra` | Postgres + Redis only |
 | `docker compose --profile dev up` | Infra + API (watch) + frontend (dev) |
 | `docker compose --profile prod up --build` | Full stack with production images |
+| `npm run docker:dev` | Same as `docker compose --profile dev up --build` |
+| `npm run docker:prod` | Same as `docker compose --profile prod up --build` |
 
 Production images:
 
@@ -107,6 +109,10 @@ npm run dev:infra
 
 # Full local prod simulation
 docker compose --profile prod up --build
+# or: npm run docker:prod
+
+# If ports 5432/6379 are busy on your machine:
+POSTGRES_PORT=15432 REDIS_PORT=16379 docker compose --profile prod up --build
 ```
 
 ## Root scripts (npm or Yarn)
@@ -114,6 +120,9 @@ docker compose --profile prod up --build
 | Script | Description |
 |--------|-------------|
 | `dev:infra` | Starts Postgres and Redis via Docker |
+| `docker:dev` | Full dev stack in Docker (hot-reload) |
+| `docker:prod` | Full prod simulation in Docker |
+| `docker:down` | Stops all Docker Compose services |
 | `dev:backend` | API in watch mode |
 | `dev:frontend` | Next.js dev server |
 | `build` | Build backend + frontend |

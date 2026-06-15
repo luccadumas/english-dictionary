@@ -4,23 +4,25 @@ WORKDIR /app
 RUN apk add --no-cache openssl
 
 FROM base AS deps
-COPY backend/package*.json backend/.npmrc ./
-RUN npm ci
+COPY backend/package.json backend/package-lock.json backend/.npmrc ./
+RUN npm ci --legacy-peer-deps
 
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY backend/ .
 RUN npx prisma generate
 RUN npm run build
+RUN npm prune --omit=dev
+RUN npm install prisma@5.17.0 --no-save --legacy-peer-deps
 
 FROM base AS runner
 ENV NODE_ENV=production
-RUN apk add --no-cache curl
-COPY --from=builder /app/dist ./dist
+RUN apk add --no-cache curl openssl
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 COPY backend/scripts/import-words.mjs ./scripts/import-words.mjs
-COPY backend/package*.json ./
+COPY backend/package.json ./
 COPY backend/docker-entrypoint.sh ./
 RUN sed -i 's/\r$//' docker-entrypoint.sh && chmod +x docker-entrypoint.sh
 RUN addgroup --system --gid 1001 nestjs && adduser --system --uid 1001 nestjs

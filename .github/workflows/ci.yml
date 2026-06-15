@@ -114,7 +114,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build backend image (docker-compose context)
+      - name: Build backend image
         run: docker build -t dictionary-api ./backend --target runner
 
       - name: Build frontend image (local simulation)

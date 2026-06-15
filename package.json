@@ -9,6 +9,9 @@
   ],
   "scripts": {
     "dev:infra": "docker compose --profile dev up -d postgres redis",
+    "docker:dev": "docker compose --profile dev up --build",
+    "docker:prod": "docker compose --profile prod up --build",
+    "docker:down": "docker compose --profile dev --profile prod down",
     "dev:backend": "node scripts/run-workspace.mjs backend start:dev",
     "dev:frontend": "node scripts/run-workspace.mjs frontend dev",
     "build": "node scripts/run-workspace.mjs backend build && node scripts/run-workspace.mjs frontend build",

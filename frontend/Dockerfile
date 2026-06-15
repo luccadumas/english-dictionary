@@ -2,7 +2,7 @@ FROM node:22-slim AS base
 WORKDIR /app
 
 FROM base AS deps
-COPY package*.json .npmrc ./
+COPY package.json .npmrc ./
 RUN npm install --legacy-peer-deps
 
 FROM base AS builder
