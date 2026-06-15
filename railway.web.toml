@@ -5,6 +5,7 @@ dockerfileTarget = "runner"
 watchPatterns = ["frontend/**", "Dockerfile.web"]
 
 [deploy]
+startCommand = "node server.js"
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
