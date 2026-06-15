@@ -6,6 +6,6 @@ watchPatterns = ["frontend/**", "Dockerfile.web"]
 
 [deploy]
 startCommand = "node server.js"
-healthcheckPath = "/"
+healthcheckPath = "/login"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
