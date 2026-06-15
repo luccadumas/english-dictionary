@@ -122,7 +122,6 @@ services:
     volumes:
       - ./frontend/src:/app/src
       - ./frontend/public:/app/public
-      - ./frontend/messages:/app/messages
     depends_on:
       - api-dev
     networks:
