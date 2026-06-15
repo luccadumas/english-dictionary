@@ -21,7 +21,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/prisma ./prisma
 COPY backend/package*.json ./
 COPY backend/docker-entrypoint.sh ./
-RUN chmod +x docker-entrypoint.sh
+RUN sed -i 's/\r$//' docker-entrypoint.sh && chmod +x docker-entrypoint.sh
 RUN addgroup --system --gid 1001 nestjs && adduser --system --uid 1001 nestjs
 USER nestjs
 EXPOSE 3333
