@@ -50,7 +50,7 @@ Write-Host ""
 Write-Host "Generating public domain for API..." -ForegroundColor Cyan
 railway domain 2>$null
 
-Write-Host "Deploying API from repo root (uses railway.toml -> backend/Dockerfile)..." -ForegroundColor Cyan
+Write-Host "Deploying API from repo root (uses railway.toml -> Dockerfile)..." -ForegroundColor Cyan
 railway up --detach
 
 Write-Host ""
