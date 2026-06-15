@@ -3,7 +3,7 @@ WORKDIR /app
 RUN apk add --no-cache openssl
 
 FROM base AS deps
-COPY package*.json ./
+COPY package*.json .npmrc ./
 RUN npm ci
 
 FROM base AS builder
