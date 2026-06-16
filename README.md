@@ -207,6 +207,12 @@ The project includes `.gitignore` at the root, in `backend/`, and in `frontend/`
 | API (Railway) | https://dictionary-api-production-d35d.up.railway.app |
 | Swagger | https://dictionary-api-production-d35d.up.railway.app/docs |
 
+<img width="1918" height="748" alt="image" src="https://github.com/user-attachments/assets/19e4c700-b31e-4466-890f-2264ad5ae9e4" />
+<img width="1602" height="567" alt="image" src="https://github.com/user-attachments/assets/03d9b6c5-1bb6-4a98-b49e-af5150c2783b" />
+<img width="1918" height="832" alt="image" src="https://github.com/user-attachments/assets/4ebec22d-9e51-48b9-8c19-db074117340f" />
+
+
+
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/GITHUB.md](docs/GITHUB.md), [backend/README.md](backend/README.md), and [frontend/README.md](frontend/README.md) for details.
 
 ## Project structure
